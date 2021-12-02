@@ -1,5 +1,5 @@
 $passwords = (get-content Day2Input.txt)
-$passwords = (get-content Day2Test.txt)
+#$passwords = (get-content Day2Test.txt)
 $validPasswords = 0
 
 foreach($password in $passwords){
