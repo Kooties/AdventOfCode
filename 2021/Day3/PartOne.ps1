@@ -1,34 +1,37 @@
-$data = Get-Content testinput.txt
-$columns = $data[0].Length
-$workingNumber = ""
+$data = Get-Content input.txt
+$columns = 0..($data[0].Length - 1)
+$workingNumber = "0b"
+$workingNumber2 = "0b"
 
 foreach($column in $columns){
-    $column -= 1
     $zero = 0
     $one = 0
     foreach($line in $data){
 
         if($line[$column] -eq "0"){
             $zero++
-            Write-Host ($line[$column]) "is 0 and 0's count is $zero"
+            #Write-Host ($line[$column]) "is 0 and 0's count is $zero"
         }else{
             $one++
-            Write-Host ($line[$column]) "is 1 and 1's count is $one"
+            #Write-Host ($line[$column]) "is 1 and 1's count is $one"
         }
     }
         if($zero -gt $one){
-            $workingNumber.$column+= "0"
-            $outputNumber = $workingnumber[$column]
-            Write-Host "Working number is currently $outputNumber"
+            $workingNumber += "0"
+            $workingNumber2 += "1"
+            $outputNumber = $workingnumber[$column+2]
+            #Write-Host "Working number is currently $outputNumber"
         }else{
-            $workingNumber.$column+= "1"
-            $outputNumber = $workingnumber[$column]
-            Write-Host "Working number is currently $outputNumber"
+            $workingNumber += "1"
+            $workingNumber2 += "0"
+            $outputNumber = $workingnumber[$column+2]
+            #Write-Host "Working number is currently $outputNumber"
         
     }
 }
-$substring1 = ($workingNumber[$column].length / 2) -1
 
-$gammaRateStr = $workingNumber[$column].substring($substring1)
+$gammaRate = $workingNumber -as [int]
+$epsilonRate = $workingNumber2 -as [int]
 
-
+$powerConsumption = $gammaRate * $epsilonRate
+return $powerConsumption
