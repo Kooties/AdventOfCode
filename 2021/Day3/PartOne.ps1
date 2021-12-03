@@ -10,22 +10,16 @@ foreach($column in $columns){
 
         if($line[$column] -eq "0"){
             $zero++
-            #Write-Host ($line[$column]) "is 0 and 0's count is $zero"
         }else{
             $one++
-            #Write-Host ($line[$column]) "is 1 and 1's count is $one"
         }
     }
         if($zero -gt $one){
             $workingNumber += "0"
             $workingNumber2 += "1"
-            $outputNumber = $workingnumber[$column+2]
-            #Write-Host "Working number is currently $outputNumber"
         }else{
             $workingNumber += "1"
             $workingNumber2 += "0"
-            $outputNumber = $workingnumber[$column+2]
-            #Write-Host "Working number is currently $outputNumber"
         
     }
 }
