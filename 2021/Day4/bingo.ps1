@@ -12,6 +12,7 @@ $data = Get-Content -Path .\input.txt
 $numberString = $data[0].Split(",")
 $calledNumbers = foreach($number in $numberString){([int]::parse($number))}
 $allCards = [System.Collections.ArrayList]@()
+$winningCards = [ordered]@{}
 
 for($i=2; $i -lt $data.length; $i++){
     if((($i - 2)%6) -eq 0){
@@ -71,8 +72,8 @@ foreach($number in $calledNumbers){
         if(($row1total -eq 0) -or ($row2total -eq 0) -or ($row3total -eq 0) -or ($row4total -eq 0) -or ($row5total -eq 0)){
             $sum = $row1total + $row2total + $row3total + $row4total + $row5total
             $winningNumber = $sum*$number
-            Write-Host "$card`n$sum x $number = $winningNumber"
-            $card.row1[0] = "x"
+            #Write-Host "$card`n$sum x $number = $winningNumber"
+            #$card.row1[0] = "x"
         }
 
         for($k=0;$k -lt 5;$k++){
@@ -80,8 +81,8 @@ foreach($number in $calledNumbers){
             if($rowTotal -eq 0){
                 $sum = $row1total + $row2total + $row3total + $row4total + $row5total
                 $winningNumber = $sum*$number
-                Write-Host $card.row1 `n $card.row2 `n $card.row3 `n $card.row4 `n $card.row5 `n "`n$sum x $number = $winningNumber"
-                $card.row1[0] = "x"
+                #Write-Host $card.row1 `n $card.row2 `n $card.row3 `n $card.row4 `n $card.row5 `n "`n$sum x $number = $winningNumber"
+                #$card.row1[0] = "x"
             }
         }
     }
