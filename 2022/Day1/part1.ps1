@@ -20,16 +20,20 @@ foreach($datum in $semiSanitizedInput){
     }
 }
 
-$mostCals = 0
-$fewestCals = 0
-$currentCals = 0
+$mostCals
+$fewestCals
+$currentCals
 foreach($num in $SanitizedInput){
+    if($num -eq $SanitizedInput[0]){
+        $mostCals = $num
+        $fewestCals = $num
+    }
     if($num -ne 0){
         $currentCals += $num
     }else{
         if($currentCals -gt $mostCals){
             $mostCals = $currentCals
-        }elseif($currentCals -lt $fewestCals){
+        }elseif(($currentCals -lt $fewestCals) -and ($currentCals -ne 0)){
             $fewestCals = $currentCals
         }
         $currentCals = 0
