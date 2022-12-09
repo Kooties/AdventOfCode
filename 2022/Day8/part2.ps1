@@ -25,7 +25,7 @@ function Get-Visibility{
         if($maxRight -lt ($checkLine[$i] -48)){
             $maxRight = ($checkLine[$i] -48)
         }
-    }$$rawData
+    }
 
     for($j=($y-1); $j -ge 0; $j--){
         $string2=(([int]$string[$j]) -48)
@@ -187,4 +187,5 @@ return $maxScore
 1997280 = too high
 445900 = too low
 480200 = not right (no comment on high/low)
+470596 was juuuuust right
 #>
