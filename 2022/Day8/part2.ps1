@@ -83,7 +83,7 @@ function Get-VisibleField{
     }
     #Write-Host "Left View Score is $leftView"
 
-    for($i=($x+1); $i -le $checkLine.length; $i++){
+    for($i=($x+1); $i -le ($checkLine.length -1); $i++){
         if(($checkLine[$i] -48) -lt $checkValue){
             $rightView++
         }elseif(($i -eq ($x+1)) -or (($checkLine[$i] -48) -ge $checkValue)){
@@ -108,7 +108,7 @@ function Get-VisibleField{
     }
     #Write-Host "Up View Score is $upView"
 
-    for($i=($y+1); $i -le $string.length; $i++){
+    for($i=($y+1); $i -le ($string.length-1); $i++){
         $string2=(([int]$string[$i] -48)) 
         if($string2 -lt $checkValue){
             $downView++
@@ -156,6 +156,7 @@ foreach($line in $rawData){
     for($j=0;$j -lt ($line.length); $j++){
         $isVisible = $false        
         $value = ([int]$line[$j] -48)
+        #Write-Host "Calculating score for $i $j"
         if(($i-eq 0) -or ($i -eq ($rawData.count-1)) -or ($j -eq 0) -or ($j -eq ($line.length-1))){
             $treeScore = 0
         }else{
@@ -164,7 +165,7 @@ foreach($line in $rawData){
                 #Write-Host "Max score changed from $maxScore to $treeScore on tree $i, $j"
                 $maxScore = $treeScore
             }
-        ##Write-Host "Score for $i $j is $treeScore"
+        #Write-Host "Score for $i $j is $treeScore"
         }
         if(($i-eq 0) -or ($i -eq ($rawData.count-1)) -or ($j -eq 0) -or ($j -eq ($line.length-1))){
             $isVisible = $true
