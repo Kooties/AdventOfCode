@@ -6,31 +6,34 @@ class Monkey{
     [System.Collections.ArrayList]$inventory
     [string]$operand
     [string]$num
-    [void]DoFunction([int]$int,[System.Collections.ArrayList]$monkeys){
+    [void]DoFunction([int]$int,[System.Collections.ArrayList]$monkeys,[int]$modulo){
         #Write-Host "Monkey inspects an item with a worry level of $int"
         if(($this.num).StartsWith("old")){
-            $workingNumber = $int
+            [int]$workingNumber = $int
         }else{
-            $workingNumber = [int]$this.num
+            [int]$workingNumber = [int]$this.num
         }
         $result = 0
         switch($this.operand){
             {$_ -like "*"} {
-                $result = ($int * $workingNumber)
+                [int]$result = (($int * $workingNumber)%$modulo)
             }
             {$_ -like "/"} {
-                $result = ($int / $workingNumber)
+                [int]$result = ($int / $workingNumber)
             }
             {$_ -like "+"} {
-                $result = ($int + $workingNumber)
+                [int]$result = ($int + $workingNumber)
             }
             {$_ -like "-"} {
-                $result = ($int - $workingNumber)
+                [int]$result = ($int - $workingNumber)
             }
         }
         #Write-Host "This causes our worry to spike to $result"
         $this.numInspections ++
-        $newWorryLevel = ($result-$result%3)/3
+        while($result -gt $modulo){
+            $result = $result%$modulo
+        }
+        [int]$newWorryLevel = $result
         #Write-Host "Monkey gets bored and worry level drops to $newWorryLevel"
         if(($newWorryLevel%$this.divisor) -eq 0){
             $monk = $this.truemonkey
@@ -41,13 +44,6 @@ class Monkey{
             $null = $monkeys[$this.falsemonkey].inventory.add($newWorryLevel)
             #Write-Host "Threw item with worry level $newWorryLevel to $monk"
         }
-        $index = $this.inventory.IndexOf($int)
-        $null = $this.inventory[$index] = 0
-    }
-    [void]throwthing([int]$thing,[int]$monkeyNumber,[System.Collections.ArrayList]$monkeys,[int]$int){
-        [int]$worryLevel = ($thing-$thing%3)/3
-        $null = $monkeys[$monkeyNumber].Inventory.Add($worryLevel)
-        #Write-Host "Threw item with worry level $worryLevel to monkey $monkeyNumber"
         $index = $this.inventory.IndexOf($int)
         $null = $this.inventory[$index] = 0
     }
@@ -64,7 +60,7 @@ class Monkey{
 
 
 $rawData = Get-Content input.txt
-$rounds = 20
+$rounds = 10000
 $monkeys = [System.Collections.ArrayList]@()
 $iteration = 0
 
@@ -80,7 +76,9 @@ foreach($line in $rawData){
         $subby = $line.substring(18,$line.length-18)
         $split = $subby.split(",\s")
         foreach($thing in $split){
-            $monkeys[$iteration].AddInventory([int]$thing)
+            [int]$thingx = $thing
+            [int]$thingy = $thingx
+            $monkeys[$iteration].AddInventory($thingy)
         }
     }elseif($line.startswith("  Operation")){
         $split = $line.split(" ") 
@@ -100,11 +98,17 @@ foreach($line in $rawData){
     }
 }
 
+$modulo=1
+foreach($monkey in $monkeys){
+    $modulo *= $monkey.divisor
+}
+
 for($i=0; $i -lt $rounds; $i++){
-    #Write-Host "Beginning round $i"
     for($j=0; $j -lt $monkeys.count; $j++){
         for($k=0; $k -lt $monkeys[$j].inventory.count; $k++){
-            $monkeys[$j].DoFunction($monkeys[$j].inventory[$k],$monkeys)
+            [int]$intput = $monkeys[$j].inventory[$k]
+            #Write-Host "Monkey $j item $k is $intput; starting inspection"
+            $monkeys[$j].DoFunction($intput,$monkeys,$modulo)
         }
         $monkeys[$j].fixinventory()
     }
@@ -113,6 +117,7 @@ $mostInspections = 0
 $secondMost = 0
 for($l = 0; $l -lt $monkeys.count; $l++){
     $x = $monkeys[$l].numInspections
+    Write-Host "Monkey $l inspected items $x times."
     if($x -gt $secondMost){
         if($x -gt $mostInspections){
             $secondMost = $mostInspections
@@ -122,6 +127,9 @@ for($l = 0; $l -lt $monkeys.count; $l++){
         }
     }
 }
+
 $monkeyBusiness = $mostInspections*$secondMost
+
+Write-Host "`nMost monkey business was $monkeyBusiness"
 
 return $monkeyBusiness
