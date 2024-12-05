@@ -1,6 +1,6 @@
 #first section is rules, second section is orders
 #result should be middle printed page numbers of each correct order summed
-$rawData = Get-Content example.txt
+$rawData = Get-Content input.txt
 
 $rules = [System.Collections.ArrayList]@()
 $orders = [System.Collections.ArrayList]@()
@@ -15,23 +15,23 @@ foreach($line in $rawData){
 }
 
 foreach($order in $orders){
-    Write-Host "Parsing order $order"
+    #Write-Host "Parsing order $order"
     $print = $true
     $orderSplit = $order.split(',')
     foreach($rule in $rules){
-        Write-Host "Checking rule $rule"
+        #Write-Host "Checking rule $rule"
         $pages = $rule.split('|')
         if(($orderSplit -contains $pages[0]) -and ($orderSplit -contains $pages[1])){
             if($orderSplit.indexof($pages[1]) -lt $orderSplit.indexof($pages[0])){
-                Write-Host "Rule Broken; setting print to False"
+                #Write-Host "Rule Broken; setting print to False"
                 $print = $false
             }
         }
     }
     if($print){
-        Write-Host "Order $order succeeds"
-        $middlePage = [int]$order[[Math]::Floor($order.length/2)]
-        Write-Host "Adding $middlePage to Sum"
+        #Write-Host "Order $order succeeds"
+        $middlePage = [int]$orderSplit[[Math]::Floor($orderSplit.length/2)]
+        #Write-Host "Adding $middlePage to Sum"
         $sum += $middlePage
     }
 }
