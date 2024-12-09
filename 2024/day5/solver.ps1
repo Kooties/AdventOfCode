@@ -60,29 +60,36 @@ foreach($order in $orders){
 
 foreach($order in $badOrders){
     $orderSplit = $order.split(',')
-    [string]$newString
+    [string]$workingRule
     foreach($number in $orderSplit){
         $applicableRules = $rules -match $number
+        $index = 500
         foreach($rule in $applicableRules){
-            $index = 500
             $pages = $rule.split('|')
             if(($orderSplit -contains $pages[0]) -and ($orderSplit -contains $pages[1])){
-                if($orderSplit.indexof($pages[0]) -gt $orderSplit.indexof($pages[1])){
-                    $workingString = $orderSplit
-                    for($i=$orderSplit.indexof($pages[0]); $i -gt $orderSplit.indexof($pages[1]); $i--){
-                        $workingString[$i] = $workingString[$i-1]
-                    }
-                    $workingString[$orderSplit.indexof($pages[1])] = $pages[0]
-                    if((verify-order -rules $rules -order $workingString) -and ($index -gt $orderSplit.indexof($pages[1]))){
-                        $index = $orderSplit.indexof($pages[1])
-                        $newString = $workingString
+                if($orderSplit.indexof($pages[1]) -lt $orderSplit.indexof($pages[0])){
+                    if($orderSplit.indexof($pages[0]) -lt $index){
+                        $index = $orderSplit.indexof($pages[0])
+                        $workingRule = $rule
                     }
                 }
             }
         }
-        $orderSplit = $newString
+        Write-Host "Correcting order $order using rule $workingRule"
+        $pages = $workingRule.split('|')
+        $workingString = $orderSplit
+        $indexA = $workingString.Indexof($pages[1])
+        $indexB = $workingString.Indexof($pages[0])
+        for($i = $indexA; $i -lt $indexB; $i++){
+            $workingString[$i] = $workingString[$i + 1]
+        }
+        $workingString[$indexA] = $pages[1]
+        $orderSplit = $workingString
+        Write-Host "Corrected to $workingString"
     }
-    
+    $middlePage = [int]$orderSplit[[Math]::Floor($orderSplit.length/2)]
+    #Write-Host "Adding $middlePage to Sum"
+    $sumIncorrect += $middlePage
 }
 
 Write-Host "Sum for correctly ordered pages is $sumCorrect"
