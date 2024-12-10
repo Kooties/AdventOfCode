@@ -2,11 +2,11 @@ function verify-order([System.Collections.ArrayList]$rules,[string]$order){
     $print = $true
     $orderSplit = $order.split(',')
     foreach($rule in $rules){
-        #Write-Host "Checking rule $rule"
+        ##Write-Host "Checking rule $rule"
         $pages = $rule.split('|')
         if(($orderSplit -contains $pages[0]) -and ($orderSplit -contains $pages[1])){
             if($orderSplit.indexof($pages[1]) -lt $orderSplit.indexof($pages[0])){
-                #Write-Host "Rule Broken; setting print to False"
+                ##Write-Host "Rule Broken; setting print to False"
                 $print = $false
             }
         }
@@ -16,29 +16,41 @@ function verify-order([System.Collections.ArrayList]$rules,[string]$order){
 
 function fix-rule($rule,$order){
     Write-Host "18 Evaluating rule $rule on order $order"
-    $orderSplit = $order.split(',')
+    $orderSplit = $order.split(',').split(' ')
     $pages = $rule.split('|')
     $workingSTring = [System.Collections.ArrayList]@()
     $indexA = $orderSplit.IndexOf($pages[0])
     Write-Host "23 Page that should be first located at $indexA"
     $indexB = $orderSplit.IndexOf($pages[1])
     Write-Host "25 Page that should be later located at $indexB"
+    if(($indexA -eq -1) -or ($indexB -eq -1)){
+        Write-Host "27 One+ of the pages isn't valid; returning input order"
+        return $order
+    }
     if($indexA -lt $indexB){
         return $order
     }
     if(!(($indexA -lt 0) -or ($indexB -lt 0))){
-        for($index = ($orderSplit.count-1); $index -gt $indexA; $index--){
-            Write-Host "27 Inserting "$orderSplit[$index]" at start of line"
-            $workingString.Insert(0,$orderSplit[$index])
+        if($indexA -eq ($orderSplit.count -1)){
+            for($i = ($orderSplit.count-2); $i -ge $indexB; $i--){
+                $workingSTring.Insert(0,$orderSplit[$i])
+            }
+            $workingSTring.Insert(0,$orderSplit[$indexA])
+        }else{
+            for($index = ($orderSplit.count-1); $index -gt $indexA; $index--){
+                Write-Host "41 Inserting "$orderSplit[$index]" at start of line"
+                $workingString.Insert(0,$orderSplit[$index])
+            }
+            $workingSTring.Insert(0,$orderSplit[$indexB])
+                Write-Host "45 Inserting "$orderSplit[$indexB]" at start of line"
+            $workingString.Insert(0,$orderSplit[$indexA])
+                Write-Host "47 Inserting "$orderSplit[$indexA]" at start of line"
         }
-        $workingSTring.Insert(0,$orderSplit[$indexB])
-            Write-Host "31 Inserting "$orderSplit[$indexB]" at start of line"
-        $workingString.Insert(0,$orderSplit[$indexA])
-            Write-Host "33 Inserting "$orderSplit[$indexA]" at start of line"
+        
         $index = ($indexB - 1)
-        Write-Host "35 Index is $index"
+        Write-Host "51 Index is $index"
         while($index -ge 0){
-            Write-Host "37 Inserting "$orderSplit[$index]" at start of line"
+            Write-Host "53 Inserting "$orderSplit[$index]" at start of line"
             $workingString.Insert(0,$orderSplit[$index])
             $index --
         }
@@ -50,8 +62,8 @@ function fix-rule($rule,$order){
 
 #first section is rules, second section is orders
 #result should be middle printed page numbers of each correct order summed
-#second section: 5647 too high
-$rawData = Get-Content example.txt
+#second section: 5647 too high; 5374 too high
+$rawData = Get-Content input.txt
 
 $rules = [System.Collections.ArrayList]@()
 $orders = [System.Collections.ArrayList]@()
@@ -69,23 +81,23 @@ foreach($line in $rawData){
 $rules.sort() | out-null
 
 foreach($order in $orders){
-    #Write-Host "Parsing order $order"
+    ##Write-Host "Parsing order $order"
     $print = $true
     $orderSplit = $order.split(',')
     foreach($rule in $rules){
-        #Write-Host "Checking rule $rule"
+        ##Write-Host "Checking rule $rule"
         $pages = $rule.split('|')
         if(($orderSplit -contains $pages[0]) -and ($orderSplit -contains $pages[1])){
             if($orderSplit.indexof($pages[1]) -lt $orderSplit.indexof($pages[0])){
-                #Write-Host "Rule Broken; setting print to False"
+                ##Write-Host "Rule Broken; setting print to False"
                 $print = $false
             }
         }
     }
     if($print){
-        #Write-Host "Order $order succeeds"
+        ##Write-Host "Order $order succeeds"
         $middlePage = [int]$orderSplit[[Math]::Floor($orderSplit.length/2)]
-        #Write-Host "Adding $middlePage to Sum"
+        ##Write-Host "Adding $middlePage to Sum"
         $sumCorrect += $middlePage
     }else{
         $badOrders.Add($order) | Out-Null
@@ -93,57 +105,86 @@ foreach($order in $orders){
 }
 
 for($i=0; $i -lt $badOrders.Count; $i++){
-    Write-Host "96: Starting work on order" $badOrders[$i]
+    Write-Host "100: Starting work on order" $badOrders[$i]
     [string]$newLine = ""
     [string]$workingRule = ""
+    [bool]$validRule = $false
+    $applicableRules = [System.Collections.ArrayList]@()
+    #$correctedStrings = [System.Collections.ArrayList]@()
     $order = $badOrders[$i].split(',')
-    Write-Host "99: New order to be worked on is $order"
-    for($x=0; $x -lt $order.count; $x++){
-        if($x -eq 0){
-            Write-Host "102: X equals $x"
-            $applicableRules = $rules -match '^'+$order[$x]
-            Write-Host "104: Applicable rules are $applicableRules for "$order[$x]
+    #Write-Host "107: New order to be worked on is $order"
+    for($x=1; $x -lt $order.count; $x++){
+        if($x -eq 1){
+            #Write-Host "108: X equals $x"
+            foreach($rule in $rules){
+                if($rule -match '^'+$order[$x]){
+                    $applicableRules.Add($rule) | Out-Null
+                }
+            }
+            #Write-Host "114: Applicable rules are $applicableRules for "$order[$x]
             $index = 500
             [string]$workingRule = ""
             foreach($rule in $applicableRules){
+                #Write-Host "118: Evaluating if rule $rule is applicable to line "$badOrders[$i]
                  $pages = $rule.split('|')
                  if(($order -contains $pages[0]) -and ($order -contains $pages[1])){
                      if($order.indexOf($pages[1]) -lt $order.indexOf($pages[0])){
-                        Write-Host "111: Rule $rule is applicable to line "$badOrders[$i]
+                        #Write-Host "122: Rule $rule is applicable to line "$badOrders[$i]
                          $workingRule = $rule
+                         $validRule = $true
                          $index = $order.indexOf($pages[1])
                      }
                  }else{
-                    Write-Host "116: Rule $rule is NOT applicable to line "$badOrders[$i]
+                    #Write-Host "127: Rule $rule is NOT applicable to line "$badOrders[$i]
                  }
             }
-            $newLine = fix-rule -rule $workingRule -order $badOrders[$i]
-            Write-Host "120: New line is $newLine"
+            if($validRule){
+                $newLine = fix-rule -rule $workingRule -order $badOrders[$i]
+                #Write-Host "131: New line is $newLine"
+            }else{
+                $newLine = $badOrders[$i]
+                #Write-Host "New line not changed"
+            }
+            $validRule = $false
+            $applicableRules.clear() | Out-Null
         }else{
-            write-Host "121: X equals $x; newline is $newLine"
-            $applicableRules = $rules -match $newLine[$x]
+            #Write-Host "142: X equals $x; newline is $newLine"
+            foreach($rule in $rules){
+                if(($rule -match '^'+$order[$x])){
+                    $applicableRules.Add($rule) | Out-Null
+                }
+            }
+            #Write-Host "148: Applicable rules are $applicableRules for "$newLine
             $index = 500
-            [string]$workingRule
             foreach($rule in $applicableRules){
                  $pages = $rule.split('|')
-                 if(($newLine -contains $pages[0]) -and ($newLine -contains $pages[1])){
+                 #Write-Host "152: Pages referenced are" $pages[0]"and"$pages[1]
+                 if(($newLine -match $pages[0]) -and ($newLine -match $pages[1])){
+                    #Write-Host "154: Line contains both pages"
+                    #Write-Host "155: Index of page 0 is "$newLine.indexOf($pages[0])"and page 1 is"$newLine.IndexOf($pages[1])"and index is $index"
                      if($newLine.indexOf($pages[1]) -lt $index){
                          $workingRule = $rule
                          $index = $newLine.indexOf($pages[1])
+                         $validRule = $True
                      }
                  }
             }
-            Write-Host "134: rule $rule is valid on $newLine"
-            $newLine = fix-rule -rule $workingRule -order $newLine
-            Write-Host "136: Line updated to $newLine"
+            if($validRule){
+                #Write-Host "152: rule $workingRule is valid on $newLine"
+                $newLine = fix-rule -rule $workingRule -order $newLine
+                #Write-Host "154: Line updated to $newLine"
+                $validRule = $false
+            }
+            $applicableRules.clear() | Out-Null
         }
     }
-    Write-Host "139: Line has completed processing. " $badOrders[$i]"became"$newLine
-    Write-Host "Corrected string is $newLine"
-    $middlePage = [int]$newLine[[Math]::Floor($newLine.count/2)]
+    #Write-Host "157: Line has completed processing. " $badOrders[$i]"became"$newLine
+    #Write-Host "Corrected string is $newLine"
+    #$correctedStrings.Add($newLine) | Out-Null
+    $applicableRules.clear() | Out-Null
+    $middlePage = [int]$newLine.split(" ")[[Math]::Floor($newLine.split(" ").count/2)]
     #Write-Host "Adding $middlePage to Sum"
     $sumIncorrect += $middlePage
-    $workingSTring.clear()
 }
 
 
