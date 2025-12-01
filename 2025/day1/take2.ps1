@@ -1,5 +1,5 @@
 $rawData = get-content input.txt
-$outfile = ".\output.txt"
+$outfile = ".\testoutput.txt"
 
 $startingNumber = 50
 $zeroCount = 0
@@ -8,6 +8,7 @@ $zeroTouch = 0
 #Add-Content -path $outfile -Value "The dial starts by pointing at $startingNumber"
 
 foreach($data in $rawData){
+    
     $alreadyCounted = $false
     if($data -match 'L'){
         $add = $false
@@ -29,7 +30,9 @@ foreach($data in $rawData){
     }
 
     while($startingNumber -lt 0){
-        $zeroTouch++
+        if([Math]::Abs($startingNumber) -ne $number){
+            $zeroTouch++
+        }
         $alreadyCounted = $true
         $startingNumber += 100
     }

@@ -6,20 +6,20 @@ It has landed on zero 0 times, and touched zero 1 times
 The dial moved R48 and ended on 0
 It has landed on zero 1 times, and touched zero 2 times
 The dial moved L5 and ended on 95
-It has landed on zero 1 times, and touched zero 3 times
+It has landed on zero 1 times, and touched zero 2 times
 The dial moved R60 and ended on 55
-It has landed on zero 1 times, and touched zero 4 times
+It has landed on zero 1 times, and touched zero 3 times
 The dial moved L55 and ended on 0
-It has landed on zero 2 times, and touched zero 5 times
+It has landed on zero 2 times, and touched zero 4 times
 The dial moved L1 and ended on 99
-It has landed on zero 2 times, and touched zero 6 times
+It has landed on zero 2 times, and touched zero 4 times
 The dial moved L99 and ended on 0
-It has landed on zero 3 times, and touched zero 7 times
+It has landed on zero 3 times, and touched zero 5 times
 The dial moved R14 and ended on 14
-It has landed on zero 3 times, and touched zero 7 times
+It has landed on zero 3 times, and touched zero 5 times
 The dial moved L82 and ended on 32
-It has landed on zero 3 times, and touched zero 8 times
+It has landed on zero 3 times, and touched zero 6 times
 The dial moved R268 and ended on 0
-It has landed on zero 4 times, and touched zero 11 times
+It has landed on zero 4 times, and touched zero 9 times
 The dial moved L300 and ended on 0
-It has landed on zero 5 times, and touched zero 14 times
+It has landed on zero 5 times, and touched zero 11 times
