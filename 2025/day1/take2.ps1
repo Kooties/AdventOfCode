@@ -1,13 +1,14 @@
-$rawData = get-content input.txt
+$rawData = get-content testinput.txt
 $outfile = ".\testoutput.txt"
 
 $startingNumber = 50
 $zeroCount = 0
 $zeroTouch = 0
 
-#Add-Content -path $outfile -Value "The dial starts by pointing at $startingNumber"
+Add-Content -path $outfile -Value "The dial starts by pointing at $startingNumber"
 
 foreach($data in $rawData){
+    $roundOne = $true
     
     $alreadyCounted = $false
     if($data -match 'L'){
@@ -30,11 +31,13 @@ foreach($data in $rawData){
     }
 
     while($startingNumber -lt 0){
-        if([Math]::Abs($startingNumber) -ne $number){
-            $zeroTouch++
+        if(([Math]::Abs($startingNumber) -eq $number) -and $roundOne){
+            $zeroTouch--
         }
+        $zeroTouch++
         $alreadyCounted = $true
         $startingNumber += 100
+        $roundOne = $false
     }
 
     if($startingNumber -eq 0){
@@ -43,8 +46,8 @@ foreach($data in $rawData){
             $zeroTouch ++
         }
     }
-    #Add-Content -path $outfile -Value "The dial moved $data and ended on $startingNumber"
-    #Add-Content -path $outfile -Value "It has landed on zero $zeroCount times, and touched zero $zeroTouch times"
+    Add-Content -path $outfile -Value "The dial moved $data and ended on $startingNumber"
+    Add-Content -path $outfile -Value "It has landed on zero $zeroCount times, and touched zero $zeroTouch times"
     
 }
 
