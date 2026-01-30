@@ -32,7 +32,7 @@ foreach($line in $rawData){
     $side = [Transmission]::new()
     $side.values = [System.Collections.ArrayList]@()
     $side.packet = $line
-    while($line match $regex){
+    while($line -match $regex){
         $range = [System.Collections.ArrayList]@()
         $string = $line -match $regex
         foreach($char in $string){
